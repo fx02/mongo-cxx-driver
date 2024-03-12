@@ -1,0 +1,10 @@
+Package: mongo-cxx-driver
+Version: %%VERSION%%
+Architecture: amd64
+Depends: 
+Section: misc
+Priority: optional
+Maintainer: Zvonimir Buzanic <zvonimir.buzanic@asseco-see.hr>
+Description: MongoDB C++11 Driver r3.9.0.
+ Mongo C++ driver built from https://github.com/mongodb/
+ 
