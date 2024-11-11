@@ -1,13 +1,13 @@
 #
-#  Mongo-cxx-driver
+#  LIVE mongo-cxx-driver
 #
-#  Created by Zvonimir Buzanic zvonimir.buzanic@asseco-see.hr
-#  2023-12-08
+#  Created by Zvonimir Buzanic.
+#  2024-11-11
 #
 # after building mongo-cxx-driver copy this Makefile and debian directory to mongo-cxx-driver-r3.9.0/deb/
 # cd mongo-cxx-driver-r3.9.0/deb/ then run "make deb"
 
-VERSION=3.9.0
+VERSION=3.9.0.1
 RELEASE=56da1f0
 
 NAME=mongo-cxx-driver
@@ -22,7 +22,7 @@ pkgdir=${libdir}/pkgconfig
 INSTALL?=install -c
 INSTALL_DATA=${INSTALL} -m 644
 LIBLIVEINCL=-I..
-COMMENT=Mongo C++ driver and library.
+COMMENT=Live Mongo C++ driver and library.
 
 deb:
 	rm -rf ${ME}
@@ -36,15 +36,15 @@ deb:
 	mkdir -p ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/exception/ ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/model/
 	mkdir -p ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/config/ ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/gridfs/
 	mkdir -p ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/events/ ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/options/gridfs/
-	mkdir -p ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/result/
+	mkdir -p ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/result/gridfs/
 	mkdir -p ${ME}/${sharedir}/mongo-c-driver/ ${ME}/${sharedir}/mongo-cxx-driver/
 	${INSTALL} -m 775 debian/* ${ME}/DEBIAN/
 	sed -i -e "s/%%VERSION%%/${VERSION}.${RELEASE}/g" ${ME}/DEBIAN/control
 #libbson
 	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-build/src/libbson/libbson-static-1.0.a ${ME}/${libdir}/libbson-static-1.0.a
 	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-build/src/libbson/libbson-1.0.so.0.0.0 ${ME}/${libdir}/libbson-1.0.so.0.0.0
-	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-build/src/libbson/libbson-1.0.so.0 ${ME}/${libdir}/libbson-1.0.so.0
 	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-build/src/libbson/libbson-1.0.so ${ME}/${libdir}/libbson-1.0.so
+	ln -s ${ME}/${libdir}/libbson-1.0.so ${ME}/${libdir}/libbson-1.0.so.0
 #pkgconfig libbson
 	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-build/src/libbson/libbson-static-1.0.pc ${ME}/${pkgdir}/libbson-static-1.0.pc
 	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-build/src/libbson/libbson-1.0.pc ${ME}/${pkgdir}/libbson-1.0.pc
@@ -55,8 +55,8 @@ deb:
 #libmongoc
 	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-build/src/libmongoc/mongoc-stat ${ME}/${bindir}/mongoc-stat
 	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-build/src/libmongoc/libmongoc-1.0.so.0.0.0 ${ME}/${libdir}/libmongoc-1.0.so.0.0.0
-	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-build/src/libmongoc/libmongoc-1.0.so.0 ${ME}/${libdir}/libmongoc-1.0.so.0
 	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-build/src/libmongoc/libmongoc-1.0.so ${ME}/${libdir}/libmongoc-1.0.so
+	ln -s ${ME}/${libdir}/libmongoc-1.0.so ${ME}/${libdir}/libmongoc-1.0.so.0
 	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-build/src/libmongoc/libmongoc-static-1.0.a ${ME}/${libdir}/libmongoc-static-1.0.a
 #pkgconfig libmongoc
 	${INSTALL} -m 755 /usr/local/lib/pkgconfig/libmongoc-1.0.pc ${ME}/${pkgdir}/libmongoc-1.0.pc
@@ -68,11 +68,12 @@ deb:
 	${INSTALL} -m 755 ../build/_deps/mongo-c-driver-src/src/libmongoc/src/mongoc/forwarding/mongoc.h ${ME}/${incdir}/libmongoc-1.0/mongoc.h
 #libbsoncxx
 	${INSTALL} -m 755 ../build/src/bsoncxx/libbsoncxx.so.3.9.0 ${ME}/${libdir}/libbsoncxx.so.3.9.0
-	${INSTALL} -m 755 ../build/src/bsoncxx/libbsoncxx.so._noabi ${ME}/${libdir}/libbsoncxx.so._noabi
 	${INSTALL} -m 755 ../build/src/bsoncxx/libbsoncxx.so ${ME}/${libdir}/libbsoncxx.so
+	ln -s ${ME}/${libdir}/libbsoncxx.so ${ME}/${libdir}/libbsoncxx.so._noabi
 #pkgconfig libbsoncxx
 	${INSTALL} -m 755 ../build/src/bsoncxx/cmake/libbsoncxx.pc ${ME}/${pkgdir}/libbsoncxx.pc
 #include libbsoncxx
+	${INSTALL} -m 755 ../build/src/bsoncxx/lib/bsoncxx/v_noabi/bsoncxx/config/*.hpp ${ME}/${incdir}/bsoncxx/v_noabi/bsoncxx/config/
 	${INSTALL} -m 755 ../src/bsoncxx/include/bsoncxx/v_noabi/bsoncxx/*.hpp ${ME}/${incdir}/bsoncxx/v_noabi/bsoncxx/
 	${INSTALL} -m 755 ../src/bsoncxx/include/bsoncxx/v_noabi/bsoncxx/types/*.hpp ${ME}/${incdir}/bsoncxx/v_noabi/bsoncxx/types/
 	${INSTALL} -m 755 ../src/bsoncxx/include/bsoncxx/v_noabi/bsoncxx/types/bson_value/*.hpp ${ME}/${incdir}/bsoncxx/v_noabi/bsoncxx/types/bson_value/
@@ -89,11 +90,13 @@ deb:
 	${INSTALL} -m 755 ../src/bsoncxx/include/bsoncxx/v_noabi/bsoncxx/document/*.hpp ${ME}/${incdir}/bsoncxx/v_noabi/bsoncxx/document/
 #libmongocxx
 	${INSTALL} -m 755 ../build/src/mongocxx/libmongocxx.so.3.9.0 ${ME}/${libdir}/libmongocxx.so.3.9.0
-	${INSTALL} -m 755 ../build/src/mongocxx/libmongocxx.so._noabi ${ME}/${libdir}/libmongocxx.so._noabi
 	${INSTALL} -m 755 ../build/src/mongocxx/libmongocxx.so ${ME}/${libdir}/libmongocxx.so
+	ln -s ${ME}/${libdir}/libmongocxx.so ${ME}/${libdir}/libmongocxx.so._noabi
 #pkgconfig libmongocxx
 	${INSTALL} -m 755 ../build/src/mongocxx/cmake/libmongocxx.pc ${ME}/${pkgdir}/libmongocxx.pc
 #include libmongocxx
+	${INSTALL} -m 755 ../build/src/mongocxx/lib/mongocxx/v_noabi/mongocxx/config/*.hpp ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/config/
+	${INSTALL} -m 755 ../src/mongocxx/include/mongocxx/v_noabi/mongocxx/result/gridfs/*.hpp ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/result/gridfs/
 	${INSTALL} -m 755 ../src/mongocxx/include/mongocxx/v_noabi/mongocxx/*.hpp ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/
 	${INSTALL} -m 755 ../src/mongocxx/include/mongocxx/v_noabi/mongocxx/exception/*.hpp ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/exception/
 	${INSTALL} -m 755 ../src/mongocxx/include/mongocxx/v_noabi/mongocxx/model/*.hpp ${ME}/${incdir}/mongocxx/v_noabi/mongocxx/model/
@@ -114,3 +117,6 @@ deb:
 	${INSTALL} -m 755 ../THIRD-PARTY-NOTICES ${ME}/${sharedir}/mongo-cxx-driver/THIRD_PARTY_NOTICES
 	${INSTALL} -m 755 ../build/generate_uninstall/uninstall.sh ${ME}/${sharedir}/mongo-cxx-driver/uninstall.sh
 	dpkg-deb --build ${ME}
+
+clean:
+	rm -rf ${ME} ${ME}.deb
